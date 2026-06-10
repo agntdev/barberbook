@@ -84,7 +84,7 @@ export function buildBot(token: string, store: Store, cfg: BotConfig, features: 
 
   // ── /start: registration + role menu (details.md §1) ──
   bot.command("start", async (ctx) => {
-    const user = store.upsertUser(ctx.from!.id);
+    const user = store.upsertUser(ctx.from!.id, ctx.from!.username ?? null);
     if (cfg.adminTgId !== null && user.tgId === cfg.adminTgId && user.role !== "admin") {
       user.role = "admin";
     }
@@ -99,7 +99,7 @@ export function buildBot(token: string, store: Store, cfg: BotConfig, features: 
 
   // ── /help (details.md §12) ──
   bot.command("help", async (ctx) => {
-    const user = store.upsertUser(ctx.from!.id);
+    const user = store.upsertUser(ctx.from!.id, ctx.from!.username ?? null);
     await ctx.reply(helpText(user.role), { reply_markup: mainMenu(user.role) });
   });
 
@@ -109,7 +109,7 @@ export function buildBot(token: string, store: Store, cfg: BotConfig, features: 
   // ── callback router (after features so their namespaces are known) ──
   bot.on("callback_query:data", async (ctx) => {
     const data = ctx.callbackQuery.data;
-    const user = store.upsertUser(ctx.from.id);
+    const user = store.upsertUser(ctx.from.id, ctx.from.username ?? null);
     const ns = data.split(":", 1)[0]!;
 
     if (ns === "menu") {
@@ -140,7 +140,7 @@ export function buildBot(token: string, store: Store, cfg: BotConfig, features: 
 
   // ── text router: registration step, feature states, fallback (§1, §13) ──
   bot.on("message:text", async (ctx) => {
-    const user = store.upsertUser(ctx.from!.id);
+    const user = store.upsertUser(ctx.from!.id, ctx.from!.username ?? null);
     const text = ctx.message.text.trim();
 
     if (user.state === "reg:name") {

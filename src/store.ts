@@ -13,6 +13,8 @@ export type ConversationState =
 export interface User {
   tgId: number;
   name: string | null;
+  /** Telegram @username (without @), captured on contact — /addbarber resolves it. */
+  username: string | null;
   role: Role;
   state: ConversationState;
 }
@@ -72,12 +74,13 @@ export class Store {
   }
 
   // ── users ──
-  upsertUser(tgId: number): User {
+  upsertUser(tgId: number, username?: string | null): User {
     let u = this.users.get(tgId);
     if (!u) {
-      u = { tgId, name: null, role: "client", state: "menu" };
+      u = { tgId, name: null, username: null, role: "client", state: "menu" };
       this.users.set(tgId, u);
     }
+    if (username !== undefined && username !== null) u.username = username;
     return u;
   }
 
