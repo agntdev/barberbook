@@ -3,5 +3,6 @@
 // skeleton with an empty list.
 
 import type { Feature } from "./bot.js";
+import { slotsFeature } from "./slots.js";
 
-export const defaultFeatures: Feature[] = [];
+export const defaultFeatures: Feature[] = [slotsFeature];
